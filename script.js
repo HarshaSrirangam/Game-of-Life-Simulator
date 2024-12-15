@@ -1,19 +1,31 @@
 const gridElement = document.getElementById("grid");
 const applyLogicBtn = document.getElementById("apply-logic-btn");
 const resetBtn = document.getElementById("reset-btn");
-const rows = 20;
-const cols = 20;
-let grid  = []
+const gridWidth = 600;
+const gridHeight = 600;
+
+let rows = 40;
+let cols = 40;
+let grid  = [];
 
 
-function initializeGrid() {
+function initializeGrid(rows, cols) {
     gridElement.innerHTML = '';
     grid = [];
+
+    const cellWidth = gridWidth / cols;
+    const cellHeight = gridHeight / rows;
+
+    gridElement.style.gridTemplateColumns = `repeat(${cols}, ${cellWidth}px)`;
+    gridElement.style.gridTemplateRows = `repeat(${rows}, ${cellHeight}px)`;
+
     for (let i = 0; i < rows; i++) {
         grid[i] = [];
         for (let j = 0; j < cols; j++) {
             const cell = document.createElement('div');
             cell.classList.add('cell');
+            cell.style.width = `${cellWidth}px`;
+            cell.style.height = `${cellHeight}px`;
             cell.addEventListener('click', () => {
                 cell.classList.toggle('activateCell');
                 if (cell.classList.contains('activateCell')) {
@@ -82,10 +94,12 @@ function applyLogic() {
 }
 
 function resetGrid() {
-    initializeGrid();
+    initializeGrid(rows, cols);
 }
+    
+
 
 applyLogicBtn.addEventListener('click', applyLogic);
 resetBtn.addEventListener('click', resetGrid);
 
-initializeGrid();
+initializeGrid(rows, cols);

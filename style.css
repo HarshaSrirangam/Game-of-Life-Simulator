@@ -1,128 +1,127 @@
-const gridElement = document.getElementById("grid");
-const applyLogicBtn = document.getElementById("apply-logic-btn");
-const applyLogicContinuouslyBtn = document.getElementById("apply-logic-continuously-btn");
-const resetBtn = document.getElementById("reset-btn");
-const gridWidth = 800;
-const gridHeight = 800;
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0a0622;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
 
-let rows = 100;
-let cols = 100;
-let grid  = [];
-let startEvolution = false;
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+}
 
+#grid {
+    display: grid;
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(20, 1fr);
+    gap: 1px;
+    background-color: #000;
+    outline: 1px solid #24425e;
+    width: 800px;
+    height: 800px;
+    max-width: 100%;
+    max-height: 100vh;
+}
 
-function initializeGrid(rows, cols) {
-    applyLogicContinuouslyBtn.textContent = "Start Evolution";
-    startEvolution = false;
-    gridElement.innerHTML = '';
-    grid = [];
+.cell {
+    width: 40px;
+    height: 40px;
+    background-color: #0a0622;
+    border: 1px solid #0a0622;
+}
 
-    const cellWidth = gridWidth / cols;
-    const cellHeight = gridHeight / rows;
+.activateCell {
+    background-color: #fff;
+}
 
-    gridElement.style.gridTemplateColumns = `repeat(${cols}, ${cellWidth}px)`;
-    gridElement.style.gridTemplateRows = `repeat(${rows}, ${cellHeight}px)`;
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: auto;
+}
 
-    for (let i = 0; i < rows; i++) {
-        grid[i] = [];
-        for (let j = 0; j < cols; j++) {
-            const cell = document.createElement('div');
-            cell.classList.add('cell');
-            cell.style.width = `${cellWidth}px`;
-            cell.style.height = `${cellHeight}px`;
-            cell.addEventListener('click', () => {
-                cell.classList.toggle('activateCell');
-                if (cell.classList.contains('activateCell')) {
-                    grid[i][j] = 1;
-                } else {
-                    grid[i][j] = 0;
-                }
-            });
-            gridElement.appendChild(cell);
-            grid[i][j] = 0;
-        }
+h1 {
+    font-size: 24px;
+    margin: 0;
+    color: #ffffff;
+}
+
+p {
+    font-size: 14px;
+    margin: 0;
+    color: #bbbbbb;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    background-color: #2c2f36;
+    border: 1px solid #444;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+    background-color: #444d56;
+    transform: scale(1.05);
+}
+
+button:focus {
+    outline: none;
+}
+
+button:active {
+    background-color: #3e444d;
+    transform: scale(0.98);
+}
+
+button:disabled {
+    background-color: #a1a1a1;
+    cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+
+    #grid {
+        width: 100%;
+        max-width: 500px;
+        height: auto;
+        aspect-ratio: 1 / 1;
+    }
+
+    .controls {
+        width: 100%;
+        max-width: 500px;
     }
 }
 
-function countNeighbors(row, col) {
-    let liveNeighbors = 0;
-    const scalars = [
-        [-1, -1], [-1, 0], [-1, 1],
-        [0, -1],           [0, 1],
-        [1, -1], [1, 0], [1, 1]
-    ];
-
-    for (let [dx, dy] of scalars) {
-        const newRow = row + dx;
-        const newCol = col + dy;
-
-        if (
-            newRow >= 0 && newRow < rows &&
-            newCol >= 0 && newCol < cols
-        ) {
-            liveNeighbors += grid[newRow][newCol];
-            }
+@media screen and (max-width: 600px) {
+    #grid {
+        max-width: 100%;
     }
-    return liveNeighbors;
-}
 
-function applyLogic() {
-    const newGrid = grid.map(row => [...row]);
-    for (let i = 0; i < rows; i++) {
-        for (let j = 0; j < cols; j++) {
-            const currentLiveNeighbors = countNeighbors(i, j);
-            const cell = gridElement.children[i * cols + j];
-
-
-            // Conway's Game of Life Rules:
-            // 1. Any live cell with fewer than two live neighbors dies (underpopulation)
-            // 2. Any live cell with two or three live neighbors lives on
-            // 3. Any live cell with more than three live neighbors dies (overpopulation)
-            // 4. Any dead cell with exactly three live neighbors becomes alive (reproduction)
-
-            if (grid[i][j] === 1) {
-                if (currentLiveNeighbors < 2 || currentLiveNeighbors > 3) {
-                    newGrid[i][j] = 0;
-                    cell.classList.remove('activateCell');
-                }
-            }
-            else {
-                if (currentLiveNeighbors === 3) {
-                    newGrid[i][j]= 1;
-                    cell.classList.add('activateCell');
-                }
-            }
-        }
-    }
-    grid = newGrid;
-}
-
-function resetGrid() {
-    initializeGrid(rows, cols);
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-
-async function evolve() {
-    startEvolution = !startEvolution;
-    if (startEvolution) {
-        applyLogicContinuouslyBtn.textContent = "Stop Evolution";
-        while (startEvolution) {
-            applyLogic();
-            await sleep(100);
-        }
-    }
-    else {
-        applyLogicContinuouslyBtn.textContent = "Start Evolution";
+    .controls {
+        max-width: 100%;
     }
 }
-
-
-applyLogicBtn.addEventListener('click', applyLogic);
-applyLogicContinuouslyBtn.addEventListener('click', evolve);
-resetBtn.addEventListener('click', resetGrid);
-
-initializeGrid(rows, cols);

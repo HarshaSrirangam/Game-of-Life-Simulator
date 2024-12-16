@@ -2,14 +2,27 @@ const gridElement = document.getElementById("grid");
 const applyLogicBtn = document.getElementById("apply-logic-btn");
 const applyLogicContinuouslyBtn = document.getElementById("apply-logic-continuously-btn");
 const resetBtn = document.getElementById("reset-btn");
-const gridWidth = 800;
-const gridHeight = 800;
 
 let rows = 100;
 let cols = 100;
-let grid  = [];
+let grid = [];
 let startEvolution = false;
 
+function calculateGridSize() {
+    const container = document.querySelector('.container');
+    const controlsWidth = document.querySelector('.controls').offsetWidth;
+    const availableWidth = container.clientWidth - controlsWidth - 80; // Subtract padding and gap
+    const availableHeight = window.innerHeight - 100; // Subtract some padding
+    
+    // Calculate the maximum grid size that fits the screen
+    const maxSize = Math.min(availableWidth, availableHeight);
+    
+    return {
+        width: maxSize,
+        height: maxSize,
+        cellSize: maxSize / cols
+    };
+}
 
 function initializeGrid(rows, cols) {
     applyLogicContinuouslyBtn.textContent = "Start Evolution";
@@ -17,19 +30,20 @@ function initializeGrid(rows, cols) {
     gridElement.innerHTML = '';
     grid = [];
 
-    const cellWidth = gridWidth / cols;
-    const cellHeight = gridHeight / rows;
+    const { width, height, cellSize } = calculateGridSize();
 
-    gridElement.style.gridTemplateColumns = `repeat(${cols}, ${cellWidth}px)`;
-    gridElement.style.gridTemplateRows = `repeat(${rows}, ${cellHeight}px)`;
+    gridElement.style.width = `${width}px`;
+    gridElement.style.height = `${height}px`;
+    gridElement.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+    gridElement.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
 
     for (let i = 0; i < rows; i++) {
         grid[i] = [];
         for (let j = 0; j < cols; j++) {
             const cell = document.createElement('div');
             cell.classList.add('cell');
-            cell.style.width = `${cellWidth}px`;
-            cell.style.height = `${cellHeight}px`;
+            cell.style.width = `${cellSize}px`;
+            cell.style.height = `${cellSize}px`;
             cell.addEventListener('click', () => {
                 cell.classList.toggle('activateCell');
                 if (cell.classList.contains('activateCell')) {
@@ -61,7 +75,7 @@ function countNeighbors(row, col) {
             newCol >= 0 && newCol < cols
         ) {
             liveNeighbors += grid[newRow][newCol];
-            }
+        }
     }
     return liveNeighbors;
 }
@@ -73,13 +87,6 @@ function applyLogic() {
             const currentLiveNeighbors = countNeighbors(i, j);
             const cell = gridElement.children[i * cols + j];
 
-
-            // Conway's Game of Life Rules:
-            // 1. Any live cell with fewer than two live neighbors dies (underpopulation)
-            // 2. Any live cell with two or three live neighbors lives on
-            // 3. Any live cell with more than three live neighbors dies (overpopulation)
-            // 4. Any dead cell with exactly three live neighbors becomes alive (reproduction)
-
             if (grid[i][j] === 1) {
                 if (currentLiveNeighbors < 2 || currentLiveNeighbors > 3) {
                     newGrid[i][j] = 0;
@@ -88,7 +95,7 @@ function applyLogic() {
             }
             else {
                 if (currentLiveNeighbors === 3) {
-                    newGrid[i][j]= 1;
+                    newGrid[i][j] = 1;
                     cell.classList.add('activateCell');
                 }
             }
@@ -105,7 +112,6 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-
 async function evolve() {
     startEvolution = !startEvolution;
     if (startEvolution) {
@@ -120,6 +126,10 @@ async function evolve() {
     }
 }
 
+// Add resize event listener
+window.addEventListener('resize', () => {
+    initializeGrid(rows, cols);
+});
 
 applyLogicBtn.addEventListener('click', applyLogic);
 applyLogicContinuouslyBtn.addEventListener('click', evolve);

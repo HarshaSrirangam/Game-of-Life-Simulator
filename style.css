@@ -1,37 +1,70 @@
 body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* GitHub-like font */
     margin: 0;
-    padding: 20px;
+    padding: 0;
     background-color: #0a0622; /* Black background */
-    color: #ffffff; /* Dark text color */
+    color: #ffffff; /* White text */
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    height: 100vh; /* Full viewport height */
+    box-sizing: border-box;
 }
+
 .container {
     display: flex;
     align-items: flex-start;
-    gap: 20px;
+    justify-content: center;
+    gap: 40px; /* Increased gap for better spacing */
+    max-width: 1200px; /* Prevents content from being too wide */
+    width: 100%; /* Ensures responsive layout */
 }
+
 #grid {
     display: grid;
-    grid-template-columns: repeat(10, 40px); /* Adjusted for visible 10x10 grid */
-    grid-template-rows: repeat(10, 40px);
-    gap: 1px; /* Thin lines between cells */
-    background-color: #000; /* Background color matches screenshot */
+    grid-template-columns: repeat(20, 40px); /* Adjust grid to fit 800x800 */
+    grid-template-rows: repeat(20, 40px);
+    gap: 1px;
+    background-color: #000;
+    outline: 1px solid #24425e; /* Slightly thicker border for emphasis */
 }
+
 .cell {
-    width: 40px; 
-    height: 40px; 
-    background-color: #0a0622; /* Black background */
-    border: 1px solid #0a0622; /* Border matches black theme */
-    
+    width: 40px;
+    height: 40px;
+    background-color: #0a0622;
+    border: 1px solid #0a0622;
 }
+
 .activateCell {
-    background-color: #fff; /* Activated cells turn white */
+    background-color: #fff;
 }
+
+
 .controls {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px; /* Larger gap for visual balance */
+    text-align: right;
 }
+
+.isEvolving {
+    content: "Stop Evolution";
+    
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0;
+    color: #ffffff;
+}
+
+p {
+    font-size: 14px;
+    margin: 0;
+    color: #bbbbbb; /* Softer color for secondary text */
+}
+
 button {
     padding: 10px 20px;
     font-size: 14px;

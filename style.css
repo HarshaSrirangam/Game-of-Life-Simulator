@@ -1,97 +1,128 @@
-body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* GitHub-like font */
-    margin: 0;
-    padding: 0;
-    background-color: #0a0622; /* Black background */
-    color: #ffffff; /* White text */
-    display: flex;
-    justify-content: center; /* Center content horizontally */
-    align-items: center; /* Center content vertically */
-    height: 100vh; /* Full viewport height */
-    box-sizing: border-box;
-}
+const gridElement = document.getElementById("grid");
+const applyLogicBtn = document.getElementById("apply-logic-btn");
+const applyLogicContinuouslyBtn = document.getElementById("apply-logic-continuously-btn");
+const resetBtn = document.getElementById("reset-btn");
+const gridWidth = 800;
+const gridHeight = 800;
 
-.container {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 40px; /* Increased gap for better spacing */
-    max-width: 1200px; /* Prevents content from being too wide */
-    width: 100%; /* Ensures responsive layout */
-}
-
-#grid {
-    display: grid;
-    grid-template-columns: repeat(20, 40px); /* Adjust grid to fit 800x800 */
-    grid-template-rows: repeat(20, 40px);
-    gap: 1px;
-    background-color: #000;
-    outline: 1px solid #24425e; /* Slightly thicker border for emphasis */
-}
-
-.cell {
-    width: 40px;
-    height: 40px;
-    background-color: #0a0622;
-    border: 1px solid #0a0622;
-}
-
-.activateCell {
-    background-color: #fff;
-}
+let rows = 100;
+let cols = 100;
+let grid  = [];
+let startEvolution = false;
 
 
-.controls {
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Larger gap for visual balance */
-    text-align: right;
+function initializeGrid(rows, cols) {
+    applyLogicContinuouslyBtn.textContent = "Start Evolution";
+    startEvolution = false;
+    gridElement.innerHTML = '';
+    grid = [];
+
+    const cellWidth = gridWidth / cols;
+    const cellHeight = gridHeight / rows;
+
+    gridElement.style.gridTemplateColumns = `repeat(${cols}, ${cellWidth}px)`;
+    gridElement.style.gridTemplateRows = `repeat(${rows}, ${cellHeight}px)`;
+
+    for (let i = 0; i < rows; i++) {
+        grid[i] = [];
+        for (let j = 0; j < cols; j++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.style.width = `${cellWidth}px`;
+            cell.style.height = `${cellHeight}px`;
+            cell.addEventListener('click', () => {
+                cell.classList.toggle('activateCell');
+                if (cell.classList.contains('activateCell')) {
+                    grid[i][j] = 1;
+                } else {
+                    grid[i][j] = 0;
+                }
+            });
+            gridElement.appendChild(cell);
+            grid[i][j] = 0;
+        }
+    }
 }
 
-.isEvolving {
-    content: "Stop Evolution";
-    
+function countNeighbors(row, col) {
+    let liveNeighbors = 0;
+    const scalars = [
+        [-1, -1], [-1, 0], [-1, 1],
+        [0, -1],           [0, 1],
+        [1, -1], [1, 0], [1, 1]
+    ];
+
+    for (let [dx, dy] of scalars) {
+        const newRow = row + dx;
+        const newCol = col + dy;
+
+        if (
+            newRow >= 0 && newRow < rows &&
+            newCol >= 0 && newCol < cols
+        ) {
+            liveNeighbors += grid[newRow][newCol];
+            }
+    }
+    return liveNeighbors;
 }
 
-h1 {
-    font-size: 24px;
-    margin: 0;
-    color: #ffffff;
+function applyLogic() {
+    const newGrid = grid.map(row => [...row]);
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            const currentLiveNeighbors = countNeighbors(i, j);
+            const cell = gridElement.children[i * cols + j];
+
+
+            // Conway's Game of Life Rules:
+            // 1. Any live cell with fewer than two live neighbors dies (underpopulation)
+            // 2. Any live cell with two or three live neighbors lives on
+            // 3. Any live cell with more than three live neighbors dies (overpopulation)
+            // 4. Any dead cell with exactly three live neighbors becomes alive (reproduction)
+
+            if (grid[i][j] === 1) {
+                if (currentLiveNeighbors < 2 || currentLiveNeighbors > 3) {
+                    newGrid[i][j] = 0;
+                    cell.classList.remove('activateCell');
+                }
+            }
+            else {
+                if (currentLiveNeighbors === 3) {
+                    newGrid[i][j]= 1;
+                    cell.classList.add('activateCell');
+                }
+            }
+        }
+    }
+    grid = newGrid;
 }
 
-p {
-    font-size: 14px;
-    margin: 0;
-    color: #bbbbbb; /* Softer color for secondary text */
+function resetGrid() {
+    initializeGrid(rows, cols);
 }
 
-button {
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    color: white;
-    background-color: #2c2f36;
-    border: 1px solid #444;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-button:hover {
-    background-color: #444d56;
-    transform: scale(1.05);
+
+async function evolve() {
+    startEvolution = !startEvolution;
+    if (startEvolution) {
+        applyLogicContinuouslyBtn.textContent = "Stop Evolution";
+        while (startEvolution) {
+            applyLogic();
+            await sleep(100);
+        }
+    }
+    else {
+        applyLogicContinuouslyBtn.textContent = "Start Evolution";
+    }
 }
 
-button:focus {
-    outline: none;
-}
 
-button:active {
-    background-color: #3e444d;
-    transform: scale(0.98);
-}
+applyLogicBtn.addEventListener('click', applyLogic);
+applyLogicContinuouslyBtn.addEventListener('click', evolve);
+resetBtn.addEventListener('click', resetGrid);
 
-button:disabled {
-    background-color: #a1a1a1;
-    cursor: not-allowed;
-}
+initializeGrid(rows, cols);

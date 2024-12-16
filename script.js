@@ -1,15 +1,19 @@
 const gridElement = document.getElementById("grid");
 const applyLogicBtn = document.getElementById("apply-logic-btn");
+const applyLogicContinuouslyBtn = document.getElementById("apply-logic-continuously-btn");
 const resetBtn = document.getElementById("reset-btn");
-const gridWidth = 600;
-const gridHeight = 600;
+const gridWidth = 800;
+const gridHeight = 800;
 
-let rows = 40;
-let cols = 40;
+let rows = 100;
+let cols = 100;
 let grid  = [];
+let startEvolution = false;
 
 
 function initializeGrid(rows, cols) {
+    applyLogicContinuouslyBtn.textContent = "Start Evolution";
+    startEvolution = false;
     gridElement.innerHTML = '';
     grid = [];
 
@@ -42,13 +46,13 @@ function initializeGrid(rows, cols) {
 
 function countNeighbors(row, col) {
     let liveNeighbors = 0;
-    const neighbors = [
+    const scalars = [
         [-1, -1], [-1, 0], [-1, 1],
         [0, -1],           [0, 1],
         [1, -1], [1, 0], [1, 1]
     ];
 
-    for (let [dx, dy] of neighbors) {
+    for (let [dx, dy] of scalars) {
         const newRow = row + dx;
         const newCol = col + dy;
 
@@ -74,7 +78,7 @@ function applyLogic() {
             // 1. Any live cell with fewer than two live neighbors dies (underpopulation)
             // 2. Any live cell with two or three live neighbors lives on
             // 3. Any live cell with more than three live neighbors dies (overpopulation)
-             // 4. Any dead cell with exactly three live neighbors becomes alive (reproduction)
+            // 4. Any dead cell with exactly three live neighbors becomes alive (reproduction)
 
             if (grid[i][j] === 1) {
                 if (currentLiveNeighbors < 2 || currentLiveNeighbors > 3) {
@@ -96,10 +100,29 @@ function applyLogic() {
 function resetGrid() {
     initializeGrid(rows, cols);
 }
-    
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+async function evolve() {
+    startEvolution = !startEvolution;
+    if (startEvolution) {
+        applyLogicContinuouslyBtn.textContent = "Stop Evolution";
+        while (startEvolution) {
+            applyLogic();
+            await sleep(100);
+        }
+    }
+    else {
+        applyLogicContinuouslyBtn.textContent = "Start Evolution";
+    }
+}
 
 
 applyLogicBtn.addEventListener('click', applyLogic);
+applyLogicContinuouslyBtn.addEventListener('click', evolve);
 resetBtn.addEventListener('click', resetGrid);
 
 initializeGrid(rows, cols);

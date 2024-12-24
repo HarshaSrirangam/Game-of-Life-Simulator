@@ -3,8 +3,8 @@ const applyLogicBtn = document.getElementById("apply-logic-btn");
 const applyLogicContinuouslyBtn = document.getElementById("apply-logic-continuously-btn");
 const resetBtn = document.getElementById("reset-btn");
 
-let rows = 100;
-let cols = 100;
+let rows = 20;
+let cols = 20;
 let grid = [];
 let startEvolution = false;
 
@@ -46,11 +46,7 @@ function initializeGrid(rows, cols) {
             cell.style.height = `${cellSize}px`;
             cell.addEventListener('click', () => {
                 cell.classList.toggle('activateCell');
-                if (cell.classList.contains('activateCell')) {
-                    grid[i][j] = 1;
-                } else {
-                    grid[i][j] = 0;
-                }
+                grid[i][j] = cell.classList.contains('activateCell') ? 1 : 0;
             });
             gridElement.appendChild(cell);
             grid[i][j] = 0;

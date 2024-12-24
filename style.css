@@ -1,131 +1,86 @@
+/* style.css */
+
 body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #0a0622;
-    color: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    box-sizing: border-box;
-    padding: 20px;
+    height: 100vh;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
 }
 
 .container {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 40px;
-    width: 100%;
-    max-width: 1200px;
+    width: 90%; /* Use 90% of the viewport width */
+    height: 90%; /* Use 90% of the viewport height */
+    gap: 20px; /* Space between the grid and the control panel */
+    align-items: center; /* Vertically centers items in the container */
 }
 
+/* Grid section */
 #grid {
+    flex: 1; /* Grid takes up most of the space */
     display: grid;
-    border: 2px solid;
-    grid-template-columns: repeat(20, 40px);
-    grid-template-rows: repeat(20, 40px);
-    gap: 1px;
-    background-color: #24425e;
-    outline: #24425e;
-    width: 100%; 
-    height: 100%; 
-    padding: 1px;
-    margin: 0;
-    box-sizing: border-box;
+    gap: 1px; /* Space between cells */
+    background-color: #ccc;
+    aspect-ratio: 1; /* Ensures the grid is a perfect square */
+    width: 100%;
+    height: auto;
+    max-width: calc((90vh - 20px) * 1); /* Constrain width to match height */
+    max-height: calc((90vh - 20px) * 1); /* Height limited by the viewport */
+    grid-template-columns: repeat(20, 1fr); /* Default to 20 columns */
+    grid-template-rows: repeat(20, 1fr); /* Default to 20 rows */
 }
 
-.cell {
-    width: 40px;
-    height: 40px;
-    background-color: #0a0622;
-    margin: 0;
-    padding: 0;
-}
-
-.activateCell {
-    background-color: #fff;
-}
-
+/* Controls section */
 .controls {
-    border: 2px solid;
+    flex: 0 0 20%; /* Ensure the control panel is 20% of the container width */
     display: flex;
     flex-direction: column;
-    align-items: end;
-    gap: 20px;
-    width: auto;
+    justify-content: flex-start;
+    gap: 15px;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    height: 100%; /* Match the height of the container */
+    margin-left: auto; /* Push the control panel to the right */
 }
 
-h1 {
-    font-size: 24px;
+/* Controls content */
+.controls h1 {
     margin: 0;
-    color: #ffffff;
+    font-size: 18px;
+    text-align: center;
 }
 
-p {
-    font-size: 14px;
-    margin: 0;
-    color: #bbbbbb;
-}
-
-button {
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 600;
+.controls button {
+    padding: 10px;
+    background-color: #007bff;
     color: white;
-    background-color: #2c2f36;
-    border: 1px solid #444;
-    border-radius: 6px;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    font-size: 14px;
+    width: 100%; /* Buttons take up the full width of the controls panel */
+    max-width: 150px; /* Prevent buttons from becoming too wide */
+    align-self: center; /* Center buttons horizontally */
 }
 
-button:hover {
-    background-color: #444d56;
-    transform: scale(1.05);
+.controls button:hover {
+    background-color: #0056b3;
 }
 
-button:focus {
-    outline: none;
+/* Active cell styling */
+.cell {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    cursor: pointer;
 }
 
-button:active {
-    background-color: #3e444d;
-    transform: scale(0.98);
-}
-
-button:disabled {
-    background-color: #a1a1a1;
-    cursor: not-allowed;
-}
-
-@media screen and (max-width: 900px) {
-    .container {
-        flex-direction: column;
-        gap: 20px;
-        align-items: center;
-    }
-
-    #grid {
-        width: 100%;
-        max-width: 500px;
-        height: auto;
-        aspect-ratio: 1 / 1;
-    }
-
-    .controls {
-        width: 100%;
-        max-width: 500px;
-    }
-}
-
-@media screen and (max-width: 600px) {
-    #grid {
-        max-width: 100%;
-    }
-
-    .controls {
-        max-width: 100%;
-    }
+.cell.activateCell {
+    background-color: #007bff;
 }

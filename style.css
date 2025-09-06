@@ -1,5 +1,3 @@
-/* style.css */
-
 body {
     margin: 0;
     padding: 0;
@@ -13,30 +11,28 @@ body {
 
 .container {
     display: flex;
-    width: 90%; /* Use 90% of the viewport width */
-    height: 90%; /* Use 90% of the viewport height */
-    gap: 20px; /* Space between the grid and the control panel */
-    align-items: center; /* Vertically centers items in the container */
+    width: 90%;
+    height: 90%;
+    gap: 20px;
+    align-items: center;
 }
 
-/* Grid section */
 #grid {
-    flex: 1; /* Grid takes up most of the space */
+    flex: 1;
     display: grid;
-    gap: 1px; /* Space between cells */
+    gap: 1px;
     background-color: #ccc;
-    aspect-ratio: 1; /* Ensures the grid is a perfect square */
+    aspect-ratio: 1;
     width: 100%;
     height: auto;
-    max-width: calc((90vh - 20px) * 1); /* Constrain width to match height */
-    max-height: calc((90vh - 20px) * 1); /* Height limited by the viewport */
-    grid-template-columns: repeat(20, 1fr); /* Default to 20 columns */
-    grid-template-rows: repeat(20, 1fr); /* Default to 20 rows */
+    max-width: calc((90vh - 20px) * 1);
+    max-height: calc((90vh - 20px) * 1);
+    grid-template-columns: repeat(20, 1fr);
+    grid-template-rows: repeat(20, 1fr);
 }
 
-/* Controls section */
 .controls {
-    flex: 0 0 20%; /* Ensure the control panel is 20% of the container width */
+    flex: 0 0 20%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -46,11 +42,10 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    height: 100%; /* Match the height of the container */
-    margin-left: auto; /* Push the control panel to the right */
+    height: 100%;
+    margin-left: auto;
 }
 
-/* Controls content */
 .controls h1 {
     margin: 0;
     font-size: 18px;
@@ -65,16 +60,15 @@ body {
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    width: 100%; /* Buttons take up the full width of the controls panel */
-    max-width: 150px; /* Prevent buttons from becoming too wide */
-    align-self: center; /* Center buttons horizontally */
+    width: 100%;
+    max-width: 150px;
+    align-self: center;
 }
 
 .controls button:hover {
     background-color: #0056b3;
 }
 
-/* Active cell styling */
 .cell {
     background-color: #fff;
     border: 1px solid #ddd;

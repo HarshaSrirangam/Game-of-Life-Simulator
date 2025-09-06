@@ -11,8 +11,8 @@ let startEvolution = false;
 function calculateGridSize() {
     const container = document.querySelector('.container');
     const controlsWidth = document.querySelector('.controls').offsetWidth;
-    const availableWidth = container.clientWidth - controlsWidth - 80; // Subtract padding and gap
-    const availableHeight = window.innerHeight - 100; // Subtract some padding
+    const availableWidth = container.clientWidth - controlsWidth - 80; 
+    const availableHeight = window.innerHeight - 100; 
     
     // Calculate the maximum grid size that fits the screen
     const maxSize = Math.min(availableWidth, availableHeight);
@@ -122,7 +122,6 @@ async function evolve() {
     }
 }
 
-// Add resize event listener
 window.addEventListener('resize', () => {
     initializeGrid(rows, cols);
 });
@@ -132,3 +131,4 @@ applyLogicContinuouslyBtn.addEventListener('click', evolve);
 resetBtn.addEventListener('click', resetGrid);
 
 initializeGrid(rows, cols);
+
